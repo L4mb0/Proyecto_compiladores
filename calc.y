@@ -3,30 +3,31 @@
 #include <ctype.h>
 int yyerror(char* s);
 int yylex();
-#define YYSTYPE double
+//#define YYSTYPE double
 %}
 
 %token NUMBER
-%left NEG
+//%left NEG
+%token ERROR
 %%
 command: exp {printf("%.2f\n",$1);}
-	   | error {yyerror("bad expresion");}
+	   | ERROR {yyerror("bad expresion");}
+	   ;
 
-exp: exp '+' term {$$ = $1 + $3;}
-   | exp '-' term {$$ = $1 - $3;}
-   | '-' term {$$ = -$2;}
-   | term {$$ = $1;}
+exp: term '+' exp	{$$ = $1 + $3;}
+   | term '-' exp	{$$ = $1 - $3;}
+   | '-' term		{$$ = - $2;}
+   | term			{$$ = $1;}
    ;
 
-term: term '*' factor {$$ = $1 * $3;}
-	| term '/' factor {$$= $1 / $3;}
-	| term '\\' factor {$$= $1 / $3;}
-	| factor {$$ = $1;}
-	| error {$$ = 0;}
+term: factor '*' term	{$$ = $1 * $3;}
+	| factor '/' term	{$$ = $1 / $3;}
+	| factor			{$$ = $1;}
+	;
 
-factor: NUMBER {$$ = $1;}
-	  | '('exp')' {$$ = $2;}
-;
+factor: NUMBER		{$$ = $1;}
+	  | '('exp')'	{$$ = $2;}
+	  ;
 
 %%
 int main(){

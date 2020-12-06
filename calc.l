@@ -4,8 +4,8 @@
 
 number [0-9]+(\.[0-9]+)?
 %%
-[ \t\n] ;
-{number} {return NUMBER;}
-\n|. {return yytext[0];}
+[ \t\n]     ;
+{number}    return NUMBER;
+.           return ERROR;
 %%
 int yywrap(){return 1;}
