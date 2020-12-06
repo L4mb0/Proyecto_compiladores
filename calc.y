@@ -33,9 +33,10 @@ int main(){
 	yyparse();
 }
 
+/*
 int yylex(){//copied but not understood
 	int c;
-	while( (c=getchar()) == ' ')/*using blanks as separators*/;
+	while( (c=getchar()) == ' ');
 
 	if(isdigit(c)){
 		ungetc(c,stdin);
@@ -46,6 +47,7 @@ int yylex(){//copied but not understood
 	if(c==(int)"\n")return 0;
 	return(c);
 }
+*/
 
 int yyerror(char* s){
 	fprintf(stderr, "%s\n",s);
