@@ -1,56 +1,63 @@
 %{
-#include <stdio.h>
-#include <ctype.h>
-int yyerror(char* s);
-int yylex();
-//#define YYSTYPE double
+    #include <ctype.h>
+    #include <stdio.h>
+    int yyerror(char *s);
+    int yylex();
+    #define YYSTYPE double
 %}
 
 %token NUMBER
-//%left NEG
-%token ERROR
 %%
-command: exp {printf("%.2f\n",$1);}
-	   | ERROR {yyerror("bad expresion");}
-	   ;
+command: exp { printf("resultado --> %lf\n",$1); }
+		| error { yyerror("bad expression"); }
+        ;
+    
+exp: exp '+' term {
+//		printf("exp: %d\n", $1);
+		$$ = $1 + $3;
+	}
+   | exp '-' term {$$ = $1 - $3;}
+   | term {$$=$1;}
+    ;
 
-exp: term '+' exp	{$$ = $1 + $3;}
-   | term '-' exp	{$$ = $1 - $3;}
-   | '-' term		{$$ = - $2;}
-   | term			{$$ = $1;}
-   ;
+term: term '*' factor {$$=$1 * $3;}
+	| term '/' factor {
+		// TODO: Validar que $3 no sea 0.
+		$$=$1 / $3;
+	}
+    | factor {$$=$1;}
+    ;
 
-term: factor '*' term	{$$ = $1 * $3;}
-	| factor '/' term	{$$ = $1 / $3;}
-	| factor			{$$ = $1;}
-	;
-
-factor: NUMBER		{$$ = $1;}
-	  | '('exp')'	{$$ = $2;}
-	  ;
-
+factor: NUMBER {$$=$1;}
+      | '('exp')'{$$=$2;}
+    ;
 %%
+
 int main(){
+	/*extern int yydebug;
+	yydebug=1;*/
 	yyparse();
 }
 
-/*
-int yylex(){//copied but not understood
-	int c;
-	while( (c=getchar()) == ' ');
+int yylex(void){
+    int c;
 
-	if(isdigit(c)){
-		ungetc(c,stdin);
-		scanf("%lf",&yylval);
-		return NUMBER;
-	}
+    while((c=getchar()) == ' ');
 
-	if(c==(int)"\n")return 0;
-	return(c);
+    if(isdigit(c)){
+        ungetc(c, stdin);
+        scanf("%lf", &yylval);
+        return NUMBER;
+    }
+    
+    if(c =='\n') return 0;
+
+    return(c);
+
 }
-*/
 
-int yyerror(char* s){
-	fprintf(stderr, "%s\n",s);
-	return 0;
+int yyerror(char *s){
+    fprintf(stderr, "%s\n", s);
+    return 0;
 }
+
