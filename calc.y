@@ -25,13 +25,13 @@
 
 %type <decimal> exp term factor
 %type <boolean> boolop boolexp
+
+%left	BOR AND 
+%right	POW ASG
+%nonassoc	NEG
 %%
 command: exp { printf("result:\t%lf\n",$1); }
 		| error { yyerror("bad expression"); }
-		| VAR ASG exp	{
-						vars[varHash($1)] = $3;
-						printf("%c <- %lf\n",$1,$3);
-						}
 		| boolexp { printf("result:\t %d \n", $1?1:0);}
         ;
     
@@ -56,6 +56,11 @@ exp: exp SUM term {
 	   				vars[varHash($3)]+=1;
 					$$ = vars[varHash($3)];
    					}
+	| VAR ASG exp	{
+					vars[varHash($1)] = $3;
+					printf("%c <- %lf\n",$1,$3);
+					$$ = $3;
+					}
     ;
 
 term: term MUL factor {$$=$1 * $3;}
