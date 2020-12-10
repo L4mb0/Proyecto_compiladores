@@ -16,6 +16,11 @@ calc_fb:
 	gcc -o calcu calc.tab.c lex.yy.c
 	./calcu
 
+calc_bison:
+	bison calc.y
+	gcc -o calcu calc.tab.c
+	./calcu
+
 calc_debug:
 	lex calc.l
 	yacc -v calc.y

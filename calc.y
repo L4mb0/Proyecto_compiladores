@@ -36,7 +36,8 @@ factor: NUMBER {$$=$1;}
 int main(){
 	/*extern int yydebug;
 	yydebug=1;*/
-	yyparse();
+	while(1)
+		yyparse();
 }
 
 int yylex(void){

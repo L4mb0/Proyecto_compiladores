@@ -4,3 +4,4 @@ lex.yy.c
 calc.tab.*
 y.output
 y.tab.c
+a.*
