@@ -35,10 +35,10 @@ term: term '*' factor {$$=$1 * $3;}
 	}
 	| term '%' factor {
 		if ($3 == 0) {
-			yyerror("El 2do valor no puede ser 0");
+			return yyerror("El 2do valor no puede ser 0");
+		} else {
+			$$ = fmod($1, $3);
 		}
-
-		$$ = fmod($1, $3);
 	}
     | factor {$$=$1;}
     ;
@@ -74,6 +74,5 @@ int yylex(void){
 
 int yyerror(char *s){
     fprintf(stderr, "%s\n", s);
-    return 0;
 }
 
