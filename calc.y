@@ -3,7 +3,7 @@
     #include <stdio.h>
     #include <math.h>
     int yyerror(char *s);
-    int yylex();
+    //int yylex();
     #define YYSTYPE double
 %}
 
@@ -55,7 +55,7 @@ int main(){
 		yyparse();
 }
 
-int yylex(void){
+/*int yylex(void){
     int c;
 
     while((c=getchar()) == ' ');
@@ -70,7 +70,7 @@ int yylex(void){
 
     return(c);
 
-}
+}*/
 
 int yyerror(char *s){
     fprintf(stderr, "%s\n", s);
