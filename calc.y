@@ -70,7 +70,7 @@ factor: NUMBER	{
 				$$=$1;
 				}
       | BPA exp EPA	{$$=$2;}
-	  | VAR {$$=$1;}
+	  | VAR {$$= vars[varHash($1)];}
     ;
 %%
 
