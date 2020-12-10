@@ -6,20 +6,33 @@
 
 number [0-9]+|[0-9]+\.[0-9]+
 var [a-zA-Z]
+Bool [tT]([rR][uU][eE])?|[fF]([aA][lL][sS][eE])?
 
 %%
 {number}	{ yylval.decimal = atof(yytext); return NUMBER;	}
-{var}	{ yylval.sign= yytext[0];return VAR;}
+{var}	{ yylval.sign = yytext[0];return VAR;}
+{Bool}	{ yylval.boolean = tolower(yytext[0])=='t'; return BOOL; }
 
-\+	{ yylval.sign= yytext[0];return SUM;}
-\*	{ yylval.sign= yytext[0];return MUL;}
-\/	{ yylval.sign= yytext[0];return DIV;}
-\-	{ yylval.sign= yytext[0];return DIF;}
-\(	{ yylval.sign= yytext[0];return BPA;}
-\)	{ yylval.sign= yytext[0];return EPA;}
-\%	{ yylval.sign= yytext[0];return MOD;}
-\=	{ yylval.sign= yytext[0];return ASG;}
-\^	{ yylval.sign= yytext[0];return POW;}
+\+	{ return SUM;}
+\*	{ return MUL;}
+\/	{ return DIV;}
+\-	{ return DIF;}
+\(	{ return BPA;}
+\)	{ return EPA;}
+\%	{ return MOD;}
+\=	{ return ASG;}
+\^	{ return POW;}
+
+\<	{ return LST;}
+\>	{ return GRT;}
+\<\=	{ return LTE;}
+\>\=	{ return GTE;}
+\=\=	{ return YEQ;}
+\!\=	{ return NEQ;}
+
+\!	{return NEG;}
+\&\&	{return AND;}
+\|\|	{return BOR;}
 
 [ \t]	;
 .|\n return 0;

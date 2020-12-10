@@ -15,20 +15,24 @@
 %union{
 	double decimal;
 	char sign;
+	_Bool boolean;
 }
 
 %token <decimal> NUMBER
-%token <sign> SUM MUL DIF DIV MOD BPA EPA ASG POW
 %token <sign> VAR
+%token <boolean> BOOL
+%token <sign> SUM MUL DIF DIV MOD BPA EPA ASG POW LST GRT LTE GTE YEQ NEQ NEG AND BOR
 
 %type <decimal> exp term factor
+%type <boolean> boolop boolexp
 %%
-command: exp { printf("resultado --> %lf\n",$1); }
+command: exp { printf("result:\t%lf\n",$1); }
 		| error { yyerror("bad expression"); }
 		| VAR ASG exp	{
 						vars[varHash($1)] = $3;
 						printf("%c <- %lf\n",$1,$3);
 						}
+		| boolexp { printf("result:\t %d \n", $1?1:0);}
         ;
     
 exp: exp SUM term {
@@ -80,6 +84,23 @@ factor: NUMBER	{
 	  | VAR {$$= vars[varHash($1)];}
 	  | exp POW exp {$$= pow($1,$3);}
     ;
+
+boolop: exp LST exp	{$$ = $1 < $3;}
+		 | exp GRT exp	{$$ = $1 > $3;}
+		 | exp LTE exp	{$$ = $1 <= $3;}
+		 | exp GTE exp	{$$ = $1 >= $3;}
+		 | exp YEQ exp	{$$ = $1 == $3;}
+		 | exp NEQ exp	{$$ = $1 != $3;}
+		 ;
+
+boolexp: boolop	{$$ = $1;}
+	   | boolexp AND boolexp {$$ = $1 && $3;}
+	   | boolexp BOR boolexp {$$ = $1 || $3;}
+	   | BPA boolexp EPA {$$=$2;}
+	   | NEG boolexp {$$=!$2;}
+	   ;
+	
+
 %%
 
 int main(){
