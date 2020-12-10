@@ -19,7 +19,9 @@ var [a-zA-Z]
 \)	{ yylval.sign= yytext[0];return EPA;}
 \%	{ yylval.sign= yytext[0];return MOD;}
 \=	{ yylval.sign= yytext[0];return ASG;}
+\^	{ yylval.sign= yytext[0];return POW;}
 
+[ \t]	;
 .|\n return 0;
 %%
 int yywrap(){return 1;}

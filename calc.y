@@ -18,11 +18,10 @@
 }
 
 %token <decimal> NUMBER
-%token <sign> SUM MUL DIF DIV MOD BPA EPA ASG
+%token <sign> SUM MUL DIF DIV MOD BPA EPA ASG POW
 %token <sign> VAR
 
 %type <decimal> exp term factor
-%type <sign> '+' '-' '*' '/' '(' ')' '%'
 %%
 command: exp { printf("resultado --> %lf\n",$1); }
 		| error { yyerror("bad expression"); }
@@ -45,6 +44,14 @@ exp: exp SUM term {
 		}
 	}
    | term {$$=$1;}
+   | DIF DIF VAR	{
+	   				vars[varHash($3)]-=1;
+					$$ = vars[varHash($3)];
+   					}
+   | SUM SUM VAR	{
+	   				vars[varHash($3)]+=1;
+					$$ = vars[varHash($3)];
+   					}
     ;
 
 term: term MUL factor {$$=$1 * $3;}
@@ -71,6 +78,7 @@ factor: NUMBER	{
 				}
       | BPA exp EPA	{$$=$2;}
 	  | VAR {$$= vars[varHash($1)];}
+	  | exp POW exp {$$= pow($1,$3);}
     ;
 %%
 
