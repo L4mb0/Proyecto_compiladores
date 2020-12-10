@@ -1,7 +1,7 @@
 all:
 	lex calc.l
 	yacc -v calc.y
-	gcc -o calcu y.tab.c
+	gcc -o calcu y.tab.c -lm
 	./calcu
 
 calc_ly:
