@@ -96,6 +96,7 @@ boolop: exp LST exp	{$$ = $1 < $3;}
 		 | exp GTE exp	{$$ = $1 >= $3;}
 		 | exp YEQ exp	{$$ = $1 == $3;}
 		 | exp NEQ exp	{$$ = $1 != $3;}
+		 | BOOL
 		 ;
 
 boolexp: boolop	{$$ = $1;}

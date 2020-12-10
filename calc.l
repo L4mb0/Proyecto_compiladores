@@ -5,12 +5,12 @@
 %}
 
 number [0-9]+|[0-9]+\.[0-9]+
-var [a-zA-Z]
+var #[a-zA-Z]
 Bool [tT]([rR][uU][eE])?|[fF]([aA][lL][sS][eE])?
 
 %%
 {number}	{ yylval.decimal = atof(yytext); return NUMBER;	}
-{var}	{ yylval.sign = yytext[0];return VAR;}
+{var}	{ yylval.sign = yytext[1];return VAR;}
 {Bool}	{ yylval.boolean = tolower(yytext[0])=='t'; return BOOL; }
 
 \+	{ return SUM;}
