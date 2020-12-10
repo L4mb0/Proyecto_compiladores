@@ -3,8 +3,13 @@
     #include <stdio.h>
     #include <math.h>
 	#define YYERROR_VERBOSE
+	#define VARSIZE 26
     int yyerror(char *s);
     int yylex();
+	void initVars();
+	int varHash(char);
+
+	double vars[VARSIZE];
 %}
 
 %union{
@@ -13,12 +18,18 @@
 }
 
 %token <decimal> NUMBER
+%token <sign> SUM MUL DIF DIV MOD BPA EPA ASG
+%token <sign> VAR
+
 %type <decimal> exp term factor
 %type <sign> '+' '-' '*' '/' '(' ')' '%'
-%token <sign> SUM MUL DIF DIV MOD BPA EPA
 %%
 command: exp { printf("resultado --> %lf\n",$1); }
 		| error { yyerror("bad expression"); }
+		| VAR ASG exp	{
+						vars[varHash($1)] = $3;
+						printf("%c <- %lf\n",$1,$3);
+						}
         ;
     
 exp: exp SUM term {
@@ -59,6 +70,7 @@ factor: NUMBER	{
 				$$=$1;
 				}
       | BPA exp EPA	{$$=$2;}
+	  | VAR {$$=$1;}
     ;
 %%
 
@@ -67,29 +79,23 @@ int main(){
 	extern int yydebug;
 	yydebug=1;
 	*/
+	initVars();
+
 	while(1)
 		yyparse();
+
 	return 0;
 }
-
-/*int yylex(void){
-    int c;
-
-    while((c=getchar()) == ' ');
-
-    if(isdigit(c)){
-        ungetc(c, stdin);
-        scanf("%lf", &yylval);
-        return NUMBER;
-    }
-    
-    if(c =='\n') return 0;
-
-    return(c);
-
-}*/
 
 int yyerror(char *s){
     fprintf(stderr, "%s\n", s);
 }
 
+void initVars(){
+	for(int i=0;i<VARSIZE;i+=1)
+		vars[i]=0;
+}
+
+int varHash(char id){
+	return tolower(id)-'a';
+}

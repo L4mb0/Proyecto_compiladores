@@ -5,13 +5,11 @@
 %}
 
 number [0-9]+|[0-9]+\.[0-9]+
+var [a-zA-Z]
 
 %%
-{number}    {
-	//printf("tex: %s\n", yytext);
-				yylval.decimal = atof(yytext);
-				return NUMBER;
-			}
+{number}	{ yylval.decimal = atof(yytext); return NUMBER;	}
+{var}	{ yylval.sign= yytext[0];return VAR;}
 
 \+	{ yylval.sign= yytext[0];return SUM;}
 \*	{ yylval.sign= yytext[0];return MUL;}
@@ -20,6 +18,7 @@ number [0-9]+|[0-9]+\.[0-9]+
 \(	{ yylval.sign= yytext[0];return BPA;}
 \)	{ yylval.sign= yytext[0];return EPA;}
 \%	{ yylval.sign= yytext[0];return MOD;}
+\=	{ yylval.sign= yytext[0];return ASG;}
 
 .|\n return 0;
 %%
