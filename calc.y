@@ -2,23 +2,31 @@
     #include <ctype.h>
     #include <stdio.h>
     #include <math.h>
+	#define YYERROR_VERBOSE
     int yyerror(char *s);
     int yylex();
-    #define YYSTYPE double
 %}
 
-%token NUMBER
+%union{
+	double decimal;
+	char sign;
+}
+
+%token <decimal> NUMBER
+%type <decimal> exp term factor
+%type <sign> '+' '-' '*' '/' '(' ')' '%'
+%token <sign> SUM MUL DIF DIV MOD BPA EPA
 %%
 command: exp { printf("resultado --> %lf\n",$1); }
 		| error { yyerror("bad expression"); }
         ;
     
-exp: exp '+' term {
-//		printf("exp: %d\n", $1);
+exp: exp SUM term {
 		$$ = $1 + $3;
+		//printf("exp:%lf\n", $$);
 	}
-	| exp '-' term {$$ = $1 - $3;}
-   	| '-' exp {
+	| exp DIF term {$$ = $1 - $3;}
+   	| DIF exp {
 		if ($2 == 0) {
 			$$ = 0;
 		} else {
@@ -28,12 +36,15 @@ exp: exp '+' term {
    | term {$$=$1;}
     ;
 
-term: term '*' factor {$$=$1 * $3;}
-	| term '/' factor {
-		// TODO: Validar que $3 no sea 0.
+term: term MUL factor {$$=$1 * $3;}
+	| term DIV factor {
+		if ($3 == 0) {
+			return yyerror("El 2do valor no puede ser 0");
+		} else {
 		$$=$1 / $3;
+		}
 	}
-	| term '%' factor {
+	| term MOD factor {
 		if ($3 == 0) {
 			return yyerror("El 2do valor no puede ser 0");
 		} else {
@@ -43,19 +54,25 @@ term: term '*' factor {$$=$1 * $3;}
     | factor {$$=$1;}
     ;
 
-factor: NUMBER {$$=$1;}
-      | '('exp')'{$$=$2;}
+factor: NUMBER	{
+				//printf("factor:%lf ",$1);
+				$$=$1;
+				}
+      | BPA exp EPA	{$$=$2;}
     ;
 %%
 
 int main(){
-	/*extern int yydebug;
-	yydebug=1;*/
+	/*
+	extern int yydebug;
+	yydebug=1;
+	*/
 	while(1)
 		yyparse();
+	return 0;
 }
 
-int yylex(void){
+/*int yylex(void){
     int c;
 
     while((c=getchar()) == ' ');
@@ -70,7 +87,7 @@ int yylex(void){
 
     return(c);
 
-}
+}*/
 
 int yyerror(char *s){
     fprintf(stderr, "%s\n", s);

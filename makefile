@@ -1,8 +1,15 @@
 all:
 	lex calc.l
-	yacc -v calc.y
-	gcc -o calcu y.tab.c -lm
+	yacc -d calc.y
+	gcc -o calcu y.tab.c lex.yy.c -lm
 	./calcu
+
+all2:
+	flex calc.l
+	bison -d calc.y
+	gcc -o calcu calc.tab.c lex.yy.c -lm
+	./calcu
+
 
 calc_ly:
 	lex ./calc.l
@@ -25,6 +32,12 @@ calc_debug:
 	lex calc.l
 	yacc -v calc.y
 	gcc -o calcu y.tab.c -DYYDEBUG -ll
+	./calcu
+
+debug2:
+	flex calc.l
+	bison -v calc.y
+	gcc -o calcu calc.tab.c lex.yy.c -DYYDEBUG
 	./calcu
 
 calc_daster:
